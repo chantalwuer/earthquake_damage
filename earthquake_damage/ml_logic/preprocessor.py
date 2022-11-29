@@ -1,12 +1,12 @@
-from sklearn.pipeline import make_pipeline
-from sklearn.compose import ColumnTransformer, make_column_transformer, make_column_selector
-from sklearn.preprocessing import OneHotEncoder, FunctionTransformer, StandardScaler
-
+import os
 import pandas as pd
 import numpy as np
-import os
 
-from earthquake_damage.ml_logic.params import LOCAL_DATA_PATH
+from sklearn.pipeline import make_pipeline
+from sklearn.compose import ColumnTransformer, make_column_transformer, make_column_selector
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+from earthquake_damage.params import LOCAL_DATA_PATH
 
 def preprocess_features(X: pd.DataFrame) -> np.ndarray:
 
@@ -38,19 +38,20 @@ def preprocess_features(X: pd.DataFrame) -> np.ndarray:
 
     print("\n✅ X_processed, with shape", X_processed.shape)
 
+    ## Trying to save to csv
 
     # X_processed.to_csv('/Users/chantalwuerschinger/code/chantalwuer/earthquake_damage/raw_data/challenge_data/submissions/submission_baseline.csv', index=False)
 
-    path = os.path.join(
-        os.path.expanduser(LOCAL_DATA_PATH),
-        "raw" if "raw" in path else "processed",
-        f"{path}.csv")
+    # path = os.path.join(
+    #     os.path.expanduser(LOCAL_DATA_PATH),
+    #     "raw" if "raw" in path else "processed",
+    #     f"{path}.csv")
 
-    print(Fore.BLUE + f"\nSave data to {path}:" + Style.RESET_ALL)
+    # # print(Fore.BLUE + f"\nSave data to {path}:" + Style.RESET_ALL)
 
-    X_processed.to_csv(path,
-                mode="w" if is_first else "a",
-                header=is_first,
-                index=False)
+    # X_processed.to_csv(path,
+    #             mode="w",
+    #             header=True,
+    #             index=False)
 
     return X_processed
