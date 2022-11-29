@@ -1,6 +1,14 @@
 # ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------
+
+reinstall_package:
+	@pip uninstall -y earthquake_damage || :
+	@pip install -e .
+
+install:
+	@pip install -e .
+
 install_requirements:
 	@pip install -r requirements.txt
 
