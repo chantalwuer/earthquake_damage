@@ -9,7 +9,7 @@ from sklearn.compose import ColumnTransformer, make_column_transformer, make_col
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, RobustScaler
 
 # from earthquake_damage.params import LOCAL_DATA_PATH
-from earthquake_damage.ml_logic.preprocessor import preprocess_features
+# from earthquake_damage.ml_logic.preprocessor import preprocess_features
 
 from pandas.api.types import is_string_dtype
 from pandas.api.types import is_numeric_dtype
@@ -19,7 +19,7 @@ from sklearn.impute import SimpleImputer
 
 
 
-def imputation(X: pd.DataFrame) -> pd.DataFrame:
+def cus_imputation(X: pd.DataFrame) -> pd.DataFrame:
 
     ''' This fucntion is used to impute the missing values in the data before traning the model.
         It is using the Simple Imputer to fill the missing values with the mean of the column.'''
@@ -27,16 +27,11 @@ def imputation(X: pd.DataFrame) -> pd.DataFrame:
     print("\nImputation...")
 
 
-    my_imputer = SimpleImputer(strategy='mean')
-    X_imputed = pd.DataFrame(my_imputer.fit_transform(X))
-    X_imputed.columns = X.columns
+    my_imputer = SimpleImputer(strategy='most_frequent')
+    X_imputed = pd.DataFrame(my_imputer.fit_transform(X), columns = X.columns).astype(X.dtypes.to_dict())
+    # X_imputed.columns = X.columns
 
     print("\n✅ X_imputed, with shape", X_imputed.shape)
-
-    #Save data
-    my_name = os.environ.get('MY_NAME')
-    path = f'/Users/{my_name}/.lewagon/project_weeks/data/processed/X_imputed.csv'
-    X_imputed.to_csv(path, index=False)
 
     return X_imputed
 
@@ -51,7 +46,7 @@ def preprocess_features(X: pd.DataFrame) -> pd.DataFrame:
 
 
     num_transformer = make_pipeline(RobustScaler())
-    num_col = make_column_selector(dtype_include=['int64'])
+    num_col = make_column_selector(dtype_include=['int64', 'float64'])
 
     cat_transformer = make_pipeline(OneHotEncoder(handle_unknown='ignore'))
     cat_col = make_column_selector(dtype_include=['object'])
@@ -113,3 +108,27 @@ def preprocess_targets(y: pd.DataFrame) -> np.ndarray:
 #     path_y = f'/Users/{my_name}/.lewagon/project_weeks/data/processed/ y_processed.csv'
 #     X.to_csv(path_X, index=False)
 #     y.to_csv(path_y, index=False)
+
+
+def tese_preprocess_features(df):
+
+    num_columns = [name for col, name in zip(df, df.columns) if df[col].dtypes =='int64' or df[col].dtypes == 'float64']
+    print('There are', len(num_columns),'columns with numeric values')
+
+    text_columns = [name for col, name in zip(df, df.columns) if df[col].dtypes =='object']
+    print('There are', len(text_columns) ,'columns with string values')
+
+    cat_transformer = OneHotEncoder(handle_unknown = 'ignore')
+    rb_scaler = RobustScaler()
+
+    preporcessor = ColumnTransformer([
+        ('rb_scaler', rb_scaler, num_columns),
+        ('cat_transformer', cat_transformer, text_columns)], remainder = 'passthrough')
+
+    df_pre = preporcessor.fit_transform(df)
+    df_pre = pd.DataFrame(df_pre, columns = preporcessor.get_feature_names_out())
+    #df_pre.columns = preporcessor.get_feature_names_out()
+
+    print("\n✅ df_processed, with shape", df_pre.shape)
+
+    return df_pre
