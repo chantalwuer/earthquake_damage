@@ -1,8 +1,6 @@
 import pandas as pd
 
-b_structure = pd.read_csv('/Users/chantalwuerschinger/code/chantalwuer/earthquake_damage/raw_data/building/csv_building_structure.csv')
-b_owner_use = pd.read_csv('/Users/chantalwuerschinger/code/chantalwuer/earthquake_damage/raw_data/building/csv_building_ownership_and_use.csv')
-
+# Methods to drop columns we do not want and merge remaining columns
 
 def drop_columns(b_structure, b_owner_use):
     """
@@ -26,7 +24,6 @@ def drop_columns(b_structure, b_owner_use):
     return b_structure, b_owner_use
 
 
-
 def merge_dataset(b_structure, b_owner_use):
     """
     This function merges the two smaller datasets into one dataset.
@@ -42,4 +39,8 @@ def drop_and_merge(b_structure, b_owner_use):
     """
     b_structure, b_owner_use = drop_columns(b_structure, b_owner_use)
     merged = merge_dataset(b_structure, b_owner_use)
+
+    # Add saving
+    # merged.to_csv('data/processed/merged_dataset.csv', index=False)
+
     return merged
