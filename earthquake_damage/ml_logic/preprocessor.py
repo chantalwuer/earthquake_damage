@@ -12,11 +12,14 @@ from sklearn.impute import SimpleImputer
 my_name = os.environ.get('MY_NAME')
 
 
-def cus_imputation(df: pd.DataFrame) -> pd.DataFrame:
+def cus_imputation(df: pd.DataFrame=True, filename=False) -> pd.DataFrame:
     '''
     This function is used to impute the missing values in the whole dataset before training the model.
     It is using the Simple Imputer to fill the missing values with the mean of the column.
     '''
+    if filename:
+        path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/{filename}.csv'
+        df = pd.read_csv(path)
 
     print("\nImputation...")
 
