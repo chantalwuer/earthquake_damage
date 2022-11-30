@@ -35,21 +35,24 @@ def merge_dataset(b_structure, b_owner_use):
     return merged
 
 
-def drop_and_merge(b_structure, b_owner_use):
+def drop_and_merge():
     """
     This function drops the columns that are not needed
     for the analysis and merges the datasets.
     """
+
+    b_structure = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/raw_data/building/csv_building_structure.csv')
+    b_owner_use = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/raw_data/building/csv_building_ownership_and_use.csv')
+
     b_structure, b_owner_use = drop_columns(b_structure, b_owner_use)
     merged = merge_dataset(b_structure, b_owner_use)
 
-    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/merge_structure_owner.csv'
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/comp_data_full.csv'
     merged.to_csv(path, index=False)
 
     print(f"✅ File saved to {path}")
 
     return None
-
 
 def refine_demographics(h_demographics):
     # Drop columns
