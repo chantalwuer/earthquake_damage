@@ -12,6 +12,29 @@ install:
 install_requirements:
 	@pip install -r requirements.txt
 
+
+
+run_preprocess:
+	python -c 'from earthquake_damage.ml_logic.preprocessor import preprocess_features; preprocess_features()'
+
+run_train:
+	python -c 'from earthquake_damage.ml_logic.model import train_model; train_model()'
+
+run_pred:
+	python -c 'from earthquake_damage.ml_logic.model import predict; predict()'
+
+run_evaluate:
+	python -c 'from earthquake_damage.ml_logic.model import cross_validate; cross_validate()'
+
+run_all: run_preprocess run_train run_pred run_evaluate
+
+
+
+
+# ----------------------------------
+# 				TEMPLATE
+# ----------------------------------
+
 check_code:
 	@flake8 scripts/* earthquake_damage/*.py
 
