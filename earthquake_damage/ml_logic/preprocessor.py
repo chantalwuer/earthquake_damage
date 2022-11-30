@@ -2,86 +2,92 @@ import os
 import pandas as pd
 import numpy as np
 
-from sklearn.pipeline import make_pipeline, Pipeline
+from sklearn.pipeline import make_pipeline
 from sklearn import set_config; set_config(display='diagram')
 
 from sklearn.compose import ColumnTransformer, make_column_transformer, make_column_selector
-from sklearn.preprocessing import OneHotEncoder, StandardScaler, RobustScaler
-
-# from earthquake_damage.params import LOCAL_DATA_PATH
-# from earthquake_damage.ml_logic.preprocessor import preprocess_features
-
-from pandas.api.types import is_string_dtype
-from pandas.api.types import is_numeric_dtype
-
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder, RobustScaler, LabelEncoder
 from sklearn.impute import SimpleImputer
 
+my_name = os.environ.get('MY_NAME')
 
 
-def cus_imputation(X: pd.DataFrame) -> pd.DataFrame:
-
-    ''' This fucntion is used to impute the missing values in the data before traning the model.
-        It is using the Simple Imputer to fill the missing values with the mean of the column.'''
+def cus_imputation(df: pd.DataFrame=True, filename=False) -> pd.DataFrame:
+    '''
+    This function is used to impute the missing values in the whole dataset before training the model.
+    It is using the Simple Imputer to fill the missing values with the mean of the column.
+    '''
+    if filename:
+        path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/{filename}.csv'
+        df = pd.read_csv(path)
 
     print("\nImputation...")
 
-
     my_imputer = SimpleImputer(strategy='most_frequent')
-    X_imputed = pd.DataFrame(my_imputer.fit_transform(X), columns = X.columns).astype(X.dtypes.to_dict())
+    df_imputed = pd.DataFrame(my_imputer.fit_transform(df), columns = df.columns).astype(df.dtypes.to_dict())
     # X_imputed.columns = X.columns
 
-    print("\n✅ X_imputed, with shape", X_imputed.shape)
+    print("\n✅ X_imputed, with shape", df_imputed.shape)
 
-    return X_imputed
+    # Save data
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/df_imputed.csv'
+    df_imputed.to_csv(path, index=False)
+
+    print(f"✅ df_imputed saved to {path}")
+
+    return None
 
 
+def preprocess_features() -> pd.DataFrame:
 
-def preprocess_features(X: pd.DataFrame) -> pd.DataFrame:
-
-    ''' This fucntion is used to preprocess the data before traning the model.
-        It is scaling the numeric features with Robust Scaler
+    ''' This function is used to preprocess the data before training the model.
+        It is scaling the numerical features with Robust Scaler
         and One Hot Encoding the categorical features.'''
 
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/df_imputed.csv'
+    df_imputed = pd.read_csv(path)
 
+    X = df_imputed.drop(['building_id', 'damage_grade'], axis=1)
 
+    # Make Preprocessing Pipeline
     num_transformer = make_pipeline(RobustScaler())
     num_col = make_column_selector(dtype_include=['int64', 'float64'])
 
     cat_transformer = make_pipeline(OneHotEncoder(handle_unknown='ignore'))
     cat_col = make_column_selector(dtype_include=['object'])
 
-    preproc_basic = make_column_transformer((num_transformer, num_col),
+    preprocessor = make_column_transformer((num_transformer, num_col),
                                             (cat_transformer, cat_col),
                                             remainder='passthrough')
 
-
-
     print("\nPreprocess features...")
 
-    preprocessor = preproc_basic
-
     X_processed = preprocessor.fit_transform(X)
-    X_processed = pd.DataFrame(X_processed, columns =preprocessor.get_feature_names_out())
-
 
     print("\n✅ X_processed, with shape", X_processed.shape)
 
     # Save data
-    my_name = os.environ.get('MY_NAME')
+    X_processed = pd.DataFrame(X_processed)
+
     path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/X_processed.csv'
-    X_processed. to_csv(path, index=False)
+    X_processed.to_csv(path, index=False)
 
-    return X_processed
+    print(f"✅ X_processed saved to {path}")
 
-def preprocess_targets(y: pd.DataFrame) -> np.ndarray:
+    return None
 
-    ''' This fucntion is used to preprocess the target data before traning the model.
-        If the labels are strings, it is converting them to integers.
-        Otherwise, it is returning the labels as they are.'''
+def preprocess_targets() -> np.ndarray:
+    '''
+    This fucntion is used to preprocess the target data before traning the model.
+    If the labels are strings, it is converting them to integers.
+    Otherwise, it is returning the labels as they are.
+    '''
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/df_imputed.csv'
+    df_imputed = pd.read_csv(path)
 
-    print("\nPreprocess targets...")
+    y = df_imputed['damage_grade']
 
+    print("\nPreprocess target...")
 
     if y.dtypes == 'object':
         le = LabelEncoder()
@@ -93,11 +99,11 @@ def preprocess_targets(y: pd.DataFrame) -> np.ndarray:
 
     #Save data
     y_processed = pd.DataFrame(y_processed)
-    my_name = os.environ.get('MY_NAME')
     path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/y_processed.csv'
     y_processed.to_csv(path, index=False)
+    print(f"✅ y_processed saved to {path}")
 
-    return y_processed
+    return None
 
 
 # def save_data(X : pd.DataFrame, y: pd.DataFrame):
