@@ -69,7 +69,7 @@ def preprocess_features(X: pd.DataFrame) -> pd.DataFrame:
 
     # Save data
     my_name = os.environ.get('MY_NAME')
-    path = f'/Users/{my_name}/.lewagon/project_weeks/data/processed/X_processed.csv'
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/X_processed.csv'
     X_processed. to_csv(path, index=False)
 
     return X_processed
@@ -94,7 +94,7 @@ def preprocess_targets(y: pd.DataFrame) -> np.ndarray:
     #Save data
     y_processed = pd.DataFrame(y_processed)
     my_name = os.environ.get('MY_NAME')
-    path = f'/Users/{my_name}/.lewagon/project_weeks/data/processed/y_processed.csv'
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/y_processed.csv'
     y_processed.to_csv(path, index=False)
 
     return y_processed
@@ -110,8 +110,11 @@ def preprocess_targets(y: pd.DataFrame) -> np.ndarray:
 #     y.to_csv(path_y, index=False)
 
 
-def tese_preprocess_features(df):
-
+def test_preprocess_features(df):
+    '''
+    This is a test of the feature preprocessing function above
+    As a backup
+    '''
     num_columns = [name for col, name in zip(df, df.columns) if df[col].dtypes =='int64' or df[col].dtypes == 'float64']
     print('There are', len(num_columns),'columns with numeric values')
 
@@ -121,13 +124,13 @@ def tese_preprocess_features(df):
     cat_transformer = OneHotEncoder(handle_unknown = 'ignore')
     rb_scaler = RobustScaler()
 
-    preporcessor = ColumnTransformer([
+    preprocessor = ColumnTransformer([
         ('rb_scaler', rb_scaler, num_columns),
         ('cat_transformer', cat_transformer, text_columns)], remainder = 'passthrough')
 
-    df_pre = preporcessor.fit_transform(df)
-    df_pre = pd.DataFrame(df_pre, columns = preporcessor.get_feature_names_out())
-    #df_pre.columns = preporcessor.get_feature_names_out()
+    df_pre = preprocessor.fit_transform(df)
+    df_pre = pd.DataFrame(df_pre, columns = preprocessor.get_feature_names_out())
+    #df_pre.columns = preprocessor.get_feature_names_out()
 
     print("\n✅ df_processed, with shape", df_pre.shape)
 
