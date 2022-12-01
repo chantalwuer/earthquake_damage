@@ -54,7 +54,7 @@ def simple_ensemble():
 
     return simple_model
 
-def nn_clf():
+#def nn_clf():
 
 
 
