@@ -50,11 +50,21 @@ def drop_and_merge():
     path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/comp_data_full.csv'
     merged.to_csv(path, index=False)
 
-    print(f"✅ File saved to {path}")
+    print(f"✅ comp_data_full saved to /processed_data/comp_data_full.csv")
 
     return None
 
-def refine_demographics(h_demographics):
+def refine_demographics():
+
+    '''
+    Method that loads csv_building_demographics.csv and drops columns that are not needed for the analysis
+    Transforms some of the categorical variables into numerical variables
+    And adds the building_id
+    Saves as csv
+    '''
+
+    h_demographics = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/raw_data/household/csv_household_demographics.csv')
+
     # Drop columns
     h_dem_drop = ['district_id', 'ward_id',
                   'vdcmun_id', 'is_bank_account_present_in_household',
@@ -90,11 +100,45 @@ def refine_demographics(h_demographics):
     h_demographics.education_level_household_head = h_demographics.education_level_household_head.\
         map(lambda x: 'High School' if x == 'SLC or equivalent' else x)
 
+
+    # Add building_id
+    print(f"Adding building_id...")
+
+    mapping = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/raw_data/geographical/mapping.csv')
+    mapping = mapping.drop(columns=['individual_id'], axis=1)
+    mapping = mapping.drop_duplicates()
+
+    h_demographics_ids = pd.merge(h_demographics, mapping, on='household_id', how='inner')
+
     print(f"Saving the file to csv...")
 
-    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/h_demographics.csv'
-    h_demographics.to_csv(path, index=False)
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/h_demographics_ids.csv'
+    h_demographics_ids.to_csv(path, index=False)
 
-    print(f"✅ File saved to {path}")
+    print(f"✅ h_demographics_ids with {h_demographics_ids.shape} saved to /processed_data/h_demographics_ids.csv")
+
+    return None
+
+
+def merge_household_building():
+    '''
+    Takes comp_data_full (building data) and h_demographics_ids (household data)
+    Merges on building_id
+    Saves as csv
+    '''
+
+    print(f"Loading household_demographics_ids.csv...")
+    household = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/h_demographics_ids.csv')
+
+    print(f"Loading comp_data_full.csv...")
+    building = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/comp_data_full.csv')
+
+    print(f"Merging datasets...")
+    comp_data_household = building.merge(household, on='building_id', how='inner')
+
+    print(f"Saving the file to csv...")
+    comp_data_household.to_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/comp_data_household.csv', index=False)
+
+    print(f"✅ comp_data_household with {comp_data_household.shape} saved to /processed_data/comp_data_household.csv")
 
     return None
