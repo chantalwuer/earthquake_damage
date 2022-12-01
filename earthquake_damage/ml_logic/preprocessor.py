@@ -38,7 +38,7 @@ def cus_imputation(df: pd.DataFrame=True, filename=False) -> pd.DataFrame:
     return None
 
 
-def preprocess_features() -> pd.DataFrame:
+def preprocess_features(X_train=None, X_test=None, X_val=None) -> pd.DataFrame:
 
     ''' This function is used to preprocess the data before training the model.
         It is scaling the numerical features with Robust Scaler
@@ -68,6 +68,7 @@ def preprocess_features() -> pd.DataFrame:
 
     # Save data
     X_processed = pd.DataFrame(X_processed)
+    X_processed.columns = preprocessor.get_feature_names_out()
 
     path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/X_processed.csv'
     X_processed.to_csv(path, index=False)
@@ -76,7 +77,7 @@ def preprocess_features() -> pd.DataFrame:
 
     return None
 
-def preprocess_targets() -> np.ndarray:
+def preprocess_targets(y_train=None, y_test=None, y_val=None) -> np.ndarray:
     '''
     This fucntion is used to preprocess the target data before traning the model.
     If the labels are strings, it is converting them to integers.
@@ -95,10 +96,11 @@ def preprocess_targets() -> np.ndarray:
     else:
         y_processed = y
 
+
     print("\n✅ y processed, with shape", y_processed.shape)
 
     #Save data
-    y_processed = pd.DataFrame(y_processed)
+    y_processed = pd.DataFrame(y_processed, columns = ['damage_grade'])
     path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/y_processed.csv'
     y_processed.to_csv(path, index=False)
     print(f"✅ y_processed saved to {path}")
@@ -116,28 +118,28 @@ def preprocess_targets() -> np.ndarray:
 #     y.to_csv(path_y, index=False)
 
 
-def test_preprocess_features(df):
-    '''
-    This is a test of the feature preprocessing function above
-    As a backup
-    '''
-    num_columns = [name for col, name in zip(df, df.columns) if df[col].dtypes =='int64' or df[col].dtypes == 'float64']
-    print('There are', len(num_columns),'columns with numeric values')
+# def test_preprocess_features(df):
+#     '''
+#     This is a test of the feature preprocessing function above
+#     As a backup
+#     '''
+#     num_columns = [name for col, name in zip(df, df.columns) if df[col].dtypes =='int64' or df[col].dtypes == 'float64']
+#     print('There are', len(num_columns),'columns with numeric values')
 
-    text_columns = [name for col, name in zip(df, df.columns) if df[col].dtypes =='object']
-    print('There are', len(text_columns) ,'columns with string values')
+#     text_columns = [name for col, name in zip(df, df.columns) if df[col].dtypes =='object']
+#     print('There are', len(text_columns) ,'columns with string values')
 
-    cat_transformer = OneHotEncoder(handle_unknown = 'ignore')
-    rb_scaler = RobustScaler()
+#     cat_transformer = OneHotEncoder(handle_unknown = 'ignore')
+#     rb_scaler = RobustScaler()
 
-    preprocessor = ColumnTransformer([
-        ('rb_scaler', rb_scaler, num_columns),
-        ('cat_transformer', cat_transformer, text_columns)], remainder = 'passthrough')
+#     preprocessor = ColumnTransformer([
+#         ('rb_scaler', rb_scaler, num_columns),
+#         ('cat_transformer', cat_transformer, text_columns)], remainder = 'passthrough')
 
-    df_pre = preprocessor.fit_transform(df)
-    df_pre = pd.DataFrame(df_pre, columns = preprocessor.get_feature_names_out())
-    #df_pre.columns = preprocessor.get_feature_names_out()
+#     df_pre = preprocessor.fit_transform(df)
+#     df_pre = pd.DataFrame(df_pre, columns = preprocessor.get_feature_names_out())
+#     #df_pre.columns = preprocessor.get_feature_names_out()
 
-    print("\n✅ df_processed, with shape", df_pre.shape)
+#     print("\n✅ df_processed, with shape", df_pre.shape)
 
-    return df_pre
+#     return df_pre

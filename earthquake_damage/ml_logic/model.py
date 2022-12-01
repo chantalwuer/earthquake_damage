@@ -1,8 +1,14 @@
 import pandas as pd
 import numpy as np
 import os
+from tensorflow import keras
+import seaborn as sns
 
+# import imbalanced_learn as imblearn
 
+import imblearn
+
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -12,6 +18,14 @@ from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier, VotingClassifier
 from sklearn.ensemble import StackingClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from imblearn.over_sampling import SMOTE
+
+
+from keras.callbacks import EarlyStopping
+from keras.models import Sequential
+from keras import layers
+from keras.optimizers import SGD
+
 
 
 from earthquake_damage.data.main import train_test_val
@@ -54,39 +68,53 @@ def simple_ensemble():
 
     return simple_model
 
-#def nn_clf():
+def nn_clf():
+    '''This function creates a neural network classifier'''
+
+    '''dim = number of features from X_processed'''
+
+    model = Sequential()
+    model.add(layers.Dense(32, activation='relu'))
+    model.add(layers.Dense(32, activation='relu'))
+    model.add(layers.Dense(1, activation='sigmoid'))
+
+    model.compile(loss = 'categorical_crossentropy', optimizer = SGD(lr=0.01, momentum=0.9), metrics = ['accuracy'])
+
+    return model
+
+def logistic_clf():
+
+    '''This function creates a logistic regression classifier'''
+
+    lr = LogisticRegression(random_state=42)
+
+    return lr
 
 
-
-
-
-def train_model(df, model):
+def train_model(model):
     """
     This function trains a model on the earthquake damage dataset.
     """
-    X_train, X_test, X_val, y_train, y_test, y_val = train_test_val(df)
-    X_train = preprocess_features(X_train)
-    #X_test = preprocess_features(X_test)
-    #X_val = preprocess_features(X_val)
-    y_train = preprocess_targets(y_train)
-    #y_test = preprocess_targets(y_test)
-    #y_val = preprocess_targets(y_val)
+    # create train,test, val sets
+    X_train, X_test, X_val, y_train, y_test, y_val = train_test_val()
 
-    model.fit(X_train, y_train)
+    # oversample for imbalanced classes
+
+    smote = SMOTE(random_state=42)
+    X_train_over, y_train_over = smote.fit_resample(X_train, y_train)
+
+    # fit the model
+    model.fit(X_train_over, y_train_over)
+
     return model
 
-def cross_validate(df, model):
+def cross_validate(model):
     """
     This function cross validates a model on the earthquake damage dataset.
     """
-    X_train, X_test, X_val, y_train, y_test, y_val = train_test_val(df)
+    # create train,test, val sets
+    X_train, X_test, X_val, y_train, y_test, y_val = train_test_val()
 
-    X_train = preprocess_features(X_train)
-    X_test = preprocess_features(X_test)
-    X_val = preprocess_features(X_val)
-    y_train = preprocess_targets(y_train)
-    y_test = preprocess_targets(y_test)
-    y_val = preprocess_targets(y_val)
 
     scores = cross_val_score(model, X_train, y_train, cv=5, scoring='f1_micro')
     print("Cross-validation scores: {}".format(scores.mean()))
