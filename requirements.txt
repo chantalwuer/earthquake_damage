@@ -9,6 +9,8 @@ numpy
 pandas
 scikit-learn
 xgboost
+tensorflow
+imblearn
 
 # tests/linter
 black
