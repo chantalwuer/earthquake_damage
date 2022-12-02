@@ -24,3 +24,20 @@ def train_test_val(test_size=0.3, random_state=42):
     X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=random_state)
 
     return X_train, X_test, X_val, y_train, y_test, y_val
+
+
+
+def reduce_memory_df(df: pd.DataFrame) -> pd.DataFrame:
+
+    print(f"Original memory usage of df is {round(df.memory_usage().sum() / 1024**2)} MB")
+    df[df.select_dtypes(['object']).columns] = df.select_dtypes(['object']).apply(lambda x: x.astype('category'))
+
+    fcols = df.select_dtypes('float').columns
+    icols = df.select_dtypes('integer').columns
+
+    df[fcols] = df[fcols].apply(pd.to_numeric, downcast='float')
+    df[icols] = df[icols].apply(pd.to_numeric, downcast='integer')
+
+    print(f"New memory usage of df is {round(df.memory_usage().sum() / 1024**2)} MB")
+
+    return df
