@@ -20,6 +20,7 @@ def cus_imputation(df: pd.DataFrame=True, filename=False) -> pd.DataFrame:
     if filename:
         path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/{filename}.csv'
         df = pd.read_csv(path)
+        missing = df.isna().sum().sum()
 
     print("\nImputation...")
 
@@ -27,7 +28,9 @@ def cus_imputation(df: pd.DataFrame=True, filename=False) -> pd.DataFrame:
     df_imputed = pd.DataFrame(my_imputer.fit_transform(df), columns = df.columns).astype(df.dtypes.to_dict())
     # X_imputed.columns = X.columns
 
-    print("\n✅ X_imputed, with shape", df_imputed.shape)
+    print("\n✅  There are", missing, "vaules missing in the dataset.")
+
+    print("\n✅ df_imputed, with shape", df_imputed.shape)
 
     # Save data
     path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/df_imputed.csv'
