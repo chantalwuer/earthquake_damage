@@ -28,6 +28,7 @@ from keras.optimizers import SGD
 
 
 
+
 from earthquake_damage.data.main import train_test_val
 from earthquake_damage.ml_logic.preprocessor import preprocess_features, cus_imputation, preprocess_targets
 
@@ -68,15 +69,15 @@ def simple_ensemble():
 
     return simple_model
 
-def nn_clf():
+def nn_clf(dim = None):
     '''This function creates a neural network classifier'''
 
     '''dim = number of features from X_processed'''
 
     model = Sequential()
+    model.add(layers.Dense(32, activation='relu', input_dim=dim))
     model.add(layers.Dense(32, activation='relu'))
-    model.add(layers.Dense(32, activation='relu'))
-    model.add(layers.Dense(1, activation='sigmoid'))
+    model.add(layers.Dense(5, activation='sigmoid'))
 
     model.compile(loss = 'categorical_crossentropy', optimizer = SGD(lr=0.01, momentum=0.9), metrics = ['accuracy'])
 
@@ -103,8 +104,16 @@ def train_model(model):
     smote = SMOTE(random_state=42)
     X_train_over, y_train_over = smote.fit_resample(X_train, y_train)
 
-    # fit the model
-    model.fit(X_train_over, y_train_over)
+    #Separate model fitting for neural network
+
+    if type(model) == keras.engine.sequential.Sequential():
+        y_train_over_hot = OneHotEncoder(handle_unknown='ignore').fit_transform(y_train_over.values.reshape(-1,1)).toarray()
+        # fit model
+        es = EarlyStopping(patience=10, restore_best_weights=True)
+        model.fit(X_train_over, y_train_over_hot, epochs=100, batch_size=32, validation_data=(X_val, y_val), verbose=0, callbacks=[es])
+    else:
+        # fit the model
+        model.fit(X_train_over, y_train_over)
 
     return model
 
@@ -118,6 +127,7 @@ def cross_validate(model):
 
     scores = cross_val_score(model, X_train, y_train, cv=5, scoring='f1_micro')
     print("Cross-validation scores: {}".format(scores.mean()))
+
     return scores
 
 def predict(model, X):
