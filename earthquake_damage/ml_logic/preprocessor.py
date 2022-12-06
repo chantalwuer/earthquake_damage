@@ -40,12 +40,10 @@ def cus_imputation(df: pd.DataFrame=True, filename=False) -> pd.DataFrame:
 
     return None
 
-
-def preprocess_features(X_train=None, X_test=None, X_val=None) -> pd.DataFrame:
-
-    ''' This function is used to preprocess the data before training the model.
-        It is scaling the numerical features with Robust Scaler
-        and One Hot Encoding the categorical features.'''
+def fit_preprocessor():
+    '''
+    Creates and fits preprocessing pipeline for use on new data
+    '''
 
     path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/df_imputed.csv'
     df_imputed = pd.read_csv(path)
@@ -63,9 +61,38 @@ def preprocess_features(X_train=None, X_test=None, X_val=None) -> pd.DataFrame:
                                             (cat_transformer, cat_col),
                                             remainder='passthrough')
 
-    print("\nPreprocess features...")
+    preprocessor.fit(X)
 
-    X_processed = preprocessor.fit_transform(X)
+    return preprocessor
+
+
+def preprocess_features(X_train=None, X_test=None, X_val=None) -> pd.DataFrame:
+
+    ''' This function is used to preprocess the data before training the model.
+        It is scaling the numerical features with Robust Scaler
+        and One Hot Encoding the categorical features.'''
+
+    path = f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/df_imputed.csv'
+    df_imputed = pd.read_csv(path)
+
+    X = df_imputed.drop(['building_id', 'damage_grade'], axis=1)
+
+    # # Make Preprocessing Pipeline
+    # num_transformer = make_pipeline(RobustScaler())
+    # num_col = make_column_selector(dtype_include=['int64', 'float64'])
+
+    # cat_transformer = make_pipeline(OneHotEncoder(handle_unknown='ignore'))
+    # cat_col = make_column_selector(dtype_include=['object'])
+
+    # preprocessor = make_column_transformer((num_transformer, num_col),
+    #                                         (cat_transformer, cat_col),
+    #                                         remainder='passthrough')
+
+    # print("\nPreprocess features...")
+
+    preprocessor = fit_preprocessor()
+
+    X_processed = preprocessor.transform(X)
 
     print("\n✅ X_processed, with shape", X_processed.shape)
 
