@@ -112,11 +112,15 @@ with model_training:
     disp_col.write(f1_micro)
 
 with plot:
-    st.header('Confusion Matrix')
+    sel_col, disp_col = st.columns(2)
+
+    width = sel_col.slider('Select the width of the plot', min_value=0, max_value=10, value=5, step=1)
+    height = sel_col.slider('Select the height of the plot', min_value=0, max_value=10, value=5, step=1)
+    disp_col.subheader('Confusion Matrix')
     confusion = confusion_matrix(y_test, y_pred)
-    fig = plt.figure(figsize=(2, 2))
+    fig = plt.figure(figsize=(width, height))
     sns.heatmap(confusion, annot=True, fmt='d',xticklabels=['damage_grade_1','damage_grade_2','damage_grade_3'], yticklabels=['damage_grade_1','damage_grade_2','damage_grade_3'])
-    st.pyplot(fig)
+    disp_col.pyplot(fig)
 
 ############################# With Merged Dataset #####################################
 
