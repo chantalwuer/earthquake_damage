@@ -72,13 +72,13 @@ def refine_demographics():
 
     h_demographics = h_demographics.drop(h_dem_drop, axis=1)
 
-    print(f"Adapting income level...")
+    # print(f"Adapting income level...")
 
-    # Income Level
-    h_demographics.income_level_household = h_demographics.income_level_household.replace({
-                    'Rs. 10 thousand': 0, 'Rs. 10-20 thousand': 1,
-                    'Rs. 20-30 thousand': 2, 'Rs. 30-50 thousand': 3,
-                    'Rs. 50 thousand or more': 4})
+    # # Income Level
+    # h_demographics.income_level_household = h_demographics.income_level_household.replace({
+    #                 'Rs. 10 thousand': 0, 'Rs. 10-20 thousand': 1,
+    #                 'Rs. 20-30 thousand': 2, 'Rs. 30-50 thousand': 3,
+    #                 'Rs. 50 thousand or more': 4})
 
     print(f"Adapting education level...")
 
