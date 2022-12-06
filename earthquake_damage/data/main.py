@@ -15,13 +15,19 @@ def train_test_val(test_size=0.3, random_state=42):
     y_processed = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/y_processed.csv')
 
     # X = df.drop(['damage_grade', 'building_id'], axis=1)
-    # y = df['damage_grade']
+    y_processed = y_processed['damage_grade']
 
     # Split the data into train and test
-    X_train, X_test, y_train, y_test = train_test_split(X_processed, y_processed, test_size=test_size, random_state=random_state)
+    X_train, X_test, y_train, y_test = train_test_split(X_processed,
+                                                        y_processed,
+                                                        test_size=test_size,
+                                                        random_state=random_state)
 
     # Split the data into test and val
-    X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=random_state)
+    X_test, X_val, y_test, y_val = train_test_split(X_test,
+                                                    y_test,
+                                                    test_size=0.5,
+                                                    random_state=random_state)
 
     return X_train, X_test, X_val, y_train, y_test, y_val
 
