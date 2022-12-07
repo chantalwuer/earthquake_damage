@@ -7,7 +7,9 @@ from earthquake_damage.ml_logic.preprocessor import fit_preprocessor
 my_name = os.environ.get('MY_NAME')
 
 
-def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=2, superstructure=5):
+def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=2, superstructure=5,
+                    foundation = 'Mud mortar-Stone/Brick',
+                    floor = 'Mud', roof = 'Bamboo/Timber-Light roof'):
 
     '''
     Takes user input, creates a dataframe and processes the features
@@ -78,7 +80,10 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
                 'has_superstructure_bamboo': has_superstructure_bamboo,
                 'has_superstructure_rc_non_engineered': has_superstructure_rc_non_engineered,
                 'has_superstructure_rc_engineered': has_superstructure_rc_engineered,
-                'has_superstructure_other': has_superstructure_other
+                'has_superstructure_other': has_superstructure_other,
+                'foundation_type': foundation,
+                'ground_floor_type': floor,
+                'roof_type': roof,
                 }
 
     user_input_df = pd.DataFrame(user_input, index=[ward_id])
