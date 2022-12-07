@@ -98,9 +98,14 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     smaller_df_wards = ward_values.where(ward_values['count_floors_pre_eq'] == floors).dropna()
     age_mask = ward_values['age_building'].isin(np.arange(age-3, age+3))
     smaller_df_wards = smaller_df_wards[age_mask]
-    smaller_df_wards = smaller_df_wards.where(smaller_df_wards['foundation_type'] == foundation).dropna()
-    smaller_df_wards = smaller_df_wards.where(smaller_df_wards['ground_floor_type'] == floor).dropna()
-    smaller_df_wards = smaller_df_wards.where(smaller_df_wards['roof_type'] == roof).dropna()
+    if foundation in smaller_df_wards.foundation_type.unique():
+        smaller_df_wards = smaller_df_wards.where(smaller_df_wards['foundation_type'] == foundation).dropna()
+
+    if floor in smaller_df_wards.ground_floor_type.unique():
+        smaller_df_wards = smaller_df_wards.where(smaller_df_wards['ground_floor_type'] == floor).dropna()
+
+    if roof in smaller_df_wards.roof_type.unique():
+        smaller_df_wards = smaller_df_wards.where(smaller_df_wards['roof_type'] == roof).dropna()
 
     # Get average data for all wards in municipality
     agg_method = {'float64': 'mean', 'int64': 'mean', 'object':  pd.Series.mode}
