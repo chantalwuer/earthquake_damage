@@ -111,12 +111,17 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     data_grouped_wards.drop(user_input.keys(), axis=1, inplace=True)
     # data_grouped_wards.drop(['damage_grade'], axis=1, inplace=True)
 
+    # If mode returns two values, take first value
+    for col in data_grouped_wards.select_dtypes(include=['object']).columns:
+        if len(data_grouped_wards[col].values[0][0]) > 1:
+            data_grouped_wards[col].values[0] = data_grouped_wards[col].values[0][0]
+
     # Get average data for chosen ward_id
-    remaining_data = data_grouped_wards.loc[ward_id]
-    remaining_data_df = pd.DataFrame(remaining_data).T
+    # remaining_data = data_grouped_wards.loc[ward_id]
+    # remaining_data_df = pd.DataFrame(remaining_data).T
 
     # Create model input
-    model_input = pd.concat([user_input_df, remaining_data_df], axis=1)
+    model_input = pd.concat([user_input_df, data_grouped_wards], axis=1)
 
     # Preprocess model input
     preprocessor = fit_preprocessor()
