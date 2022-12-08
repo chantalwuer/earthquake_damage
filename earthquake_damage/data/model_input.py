@@ -11,9 +11,11 @@ from earthquake_damage.ml_logic.preprocessor import fit_preprocessor
 
 my_name = os.environ.get('MY_NAME')
 
+
 def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=2, superstructure=5,
-                    foundation= 'Mud mortar-Stone/Brick',
-                    floor= 'Mud', roof= 'Bamboo/Timber-Light roof'):
+                    foundation = 'Mud mortar-Stone/Brick',
+                    floor = 'Mud', roof = 'Bamboo/Timber-Light roof'):
+
     '''
     Takes user input, creates a dataframe and processes the features
     Output is a dataframe with the processed features ready for the model
@@ -93,9 +95,15 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     ward_values = household_comp.loc[household_comp['ward_id'] == ward_id]
 
     # Within ward, filter for age, number of floors, roof, foundation, ground floor type
-    smaller_df_wards = ward_values.where(ward_values['count_floors_pre_eq'] == floors).dropna()
     age_mask = ward_values['age_building'].isin(np.arange(age-3, age+3))
-    smaller_df_wards = smaller_df_wards[age_mask]
+    smaller_df_wards = ward_values[age_mask]
+
+    if floors in smaller_df_wards.count_floors_pre_eq.unique():
+        smaller_df_wards = smaller_df_wards.where(smaller_df_wards['count_floors_pre_eq'] == floors).dropna()
+    else:
+        floor_mask = smaller_df_wards['count_floors_pre_eq'].isin(np.arange(int(floors)-1, int(floors)+1))
+        smaller_df_wards = smaller_df_wards[floor_mask]
+
     if foundation in smaller_df_wards.foundation_type.unique():
         smaller_df_wards = smaller_df_wards.where(smaller_df_wards['foundation_type'] == foundation).dropna()
 
