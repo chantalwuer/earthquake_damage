@@ -1,2 +1,4 @@
 git+https://github.com/chantalwuer/earthquake_damage#egg=earthquake_damage
 seaborn
+pandas
+numpy
