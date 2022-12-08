@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pandas as pd
 import pickle
+import zipfile
 
 # ? Do I need this
 import pkg_resources
@@ -25,7 +26,11 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     Output is a dataframe with the processed features ready for the model
     '''
     # ! Add file path here
-    full_path = os.path.join(os.path.dirname(__file__), 'processed_data/comp_data_household.csv')
+    full_path = os.path.join(os.path.dirname(__file__), 'dataset/data.zip')
+    with zipfile.ZipFile(full_path, 'r') as zip_ref:
+        zip_ref.extractall(os.path.join(os.path.dirname(__file__), 'dataset/'))
+
+    full_path = os.path.join(os.path.dirname(__file__), 'dataset/comp_data_household.csv')
     household_comp = pd.read_csv(full_path)
     # household_comp = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/comp_data_household.csv')
 
