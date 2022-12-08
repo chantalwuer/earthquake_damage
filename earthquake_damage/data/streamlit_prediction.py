@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import pickle
 
-from earthquake_damage import data # custom module
+import earthquake_damage as ea
 #from earthquake_damage.data.model_input import get_model_input # custom module
 
 
@@ -234,7 +234,7 @@ with user_input:
     roof_user = st.selectbox(' ', roof_list)
 
 
-    user_pd = data.model_input.get_model_input(district_id = user_district_id,
+    user_pd = ea.data.model_input.get_model_input(district_id = user_district_id,
                                 municipality_id = muni_id,
                                 ward = ward_input,
                                 age = age_building,
