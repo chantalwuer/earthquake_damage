@@ -7,7 +7,7 @@ wheel>=0.29
 # data science
 numpy
 pandas
-scikit-learn
+scikit-learn==1.1.1
 xgboost
 tensorflow
 imblearn
@@ -24,7 +24,7 @@ gcsfs
 google-cloud-storage
 mlflow
 s3fs
-streamlit 
+streamlit
 
 # utilities
 six>=1.14
