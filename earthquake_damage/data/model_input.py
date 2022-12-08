@@ -3,13 +3,14 @@ Methods to create a dataframe with the user input and the average
 values for the other buildings in the ward
 '''
 
-# import os
+import os
 import numpy as np
 import pandas as pd
+import pickle
 
 from earthquake_damage.ml_logic.preprocessor import fit_preprocessor
 
-# my_name = os.environ.get('MY_NAME')
+my_name = os.environ.get('MY_NAME')
 
 
 def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=2, superstructure=5,
@@ -133,7 +134,8 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     model_input = pd.concat([user_input_df, data_grouped_wards], axis=1)
 
     # Preprocess model input
-    preprocessor = fit_preprocessor()
+    preprocessor = pickle.load(open('preprocessor.pkl','rb'))
+
     model_input_proc = preprocessor.transform(model_input)
 
     return pd.DataFrame(model_input_proc)
