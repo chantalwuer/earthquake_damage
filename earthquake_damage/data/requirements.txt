@@ -1,1 +1,1 @@
-earthquake_damage
+git+https://github.com/earthquake_damage#egg=earthquake_damage
