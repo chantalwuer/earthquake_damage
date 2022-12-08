@@ -1,11 +1,9 @@
 import streamlit as st
 import pandas as pd
 import pickle
+import os
 
-import earthquake_damage as ea
-#from earthquake_damage.data.model_input import get_model_input # custom module
-
-
+from earthquake_damage.data.model_input import get_model_input
 import seaborn as sns
 import matplotlib.ticker as mtick
 
@@ -234,7 +232,7 @@ with user_input:
     roof_user = st.selectbox(' ', roof_list)
 
 
-    user_pd = ea.data.model_input.get_model_input(district_id = user_district_id,
+    user_pd = get_model_input(district_id = user_district_id,
                                 municipality_id = muni_id,
                                 ward = ward_input,
                                 age = age_building,
@@ -246,7 +244,8 @@ with user_input:
 
 
     ## Call the model and make prediction
-    pickled_model = pickle.load(open('fit_best_model.pkl', 'rb'))
+    file = os.path.join(os.path.dirname(__file__), 'fit_best_model.pkl')
+    pickled_model = pickle.load(open(file, 'rb'))
 
     prediction = pd.DataFrame(pickled_model.predict_proba(user_pd))
     prediction.columns = ['Damage Grade 1', 'Damage Grade 2', 'Damage Grade 3', 'Damage Grade 4', 'Damage Grade 5']

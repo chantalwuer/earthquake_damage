@@ -8,10 +8,13 @@ import numpy as np
 import pandas as pd
 import pickle
 
-from earthquake_damage.ml_logic.preprocessor import fit_preprocessor
+# ? Do I need this
+import pkg_resources
+DATA_PATH = pkg_resources.resource_filename('earthquake_damage', 'processed_data/')
+DB_FILE = pkg_resources.resource_filename('earthquake_damage', 'processed_data/comp_data_household.csv')
 
-my_name = os.environ.get('MY_NAME')
-
+# from earthquake_damage.ml_logic.preprocessor import fit_preprocessor
+# my_name = os.environ.get('MY_NAME')
 
 def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=2, superstructure=5,
                     foundation = 'Mud mortar-Stone/Brick',
@@ -21,8 +24,11 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     Takes user input, creates a dataframe and processes the features
     Output is a dataframe with the processed features ready for the model
     '''
-    household_comp = pd.read_csv('../../processed_data/comp_data_household.csv')
+    # ! Add file path here
+    full_path = os.path.join(os.path.dirname(__file__), './../../processed_data/comp_data_household.csv')
+    household_comp = pd.read_csv(full_path)
     # household_comp = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/comp_data_household.csv')
+
     household_comp.drop(columns=['damage_grade', 'building_id'], inplace=True)
 
     # Determine superstructure kind
@@ -133,14 +139,15 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     # Create model input
     model_input = pd.concat([user_input_df, data_grouped_wards], axis=1)
 
+    # ! Adjust path here too?
     # Preprocess model input
-    preprocessor = pickle.load(open('preprocessor.pkl','rb'))
+    file = os.path.join(os.path.dirname(__file__), 'preprocessor.pkl')
+    preprocessor = pickle.load(open(file,'rb'))
 
     model_input_proc = preprocessor.transform(model_input)
 
-    return pd.DataFrame(model_input_proc)
-
-
+    print(model_input_proc.shape)
+    return pd.DataFrame(model_input_proc[:, :79])
 
 # if __name__ == '__main__':
 #     household_comp = pd.read_csv('../../processed_data/comp_data_household.csv')
