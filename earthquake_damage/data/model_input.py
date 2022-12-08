@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pickle
 
-from earthquake_damage.ml_logic.preprocessor import fit_preprocessor
+#from earthquake_damage.ml_logic.preprocessor import fit_preprocessor
 
 my_name = os.environ.get('MY_NAME')
 
