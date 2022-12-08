@@ -6,7 +6,6 @@ from earthquake_damage.data.model_input import get_model_input # custom module
 
 import seaborn as sns
 import matplotlib.ticker as mtick
-from matplotlib.ticker import MaxNLocator
 
 header = st.container()
 user_input = st.container()
@@ -247,7 +246,7 @@ with user_input:
     ## Call the model and make prediction
     pickled_model = pickle.load(open('fit_best_model.pkl', 'rb'))
 
-    prediction = pd.DataFrame(pickled_model.predict(user_pd))
+    prediction = pd.DataFrame(pickled_model.predict_proba(user_pd))
     prediction.columns = ['Damage Grade 1', 'Damage Grade 2', 'Damage Grade 3', 'Damage Grade 4', 'Damage Grade 5']
     prediction.index = ['Probability']
 

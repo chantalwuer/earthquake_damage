@@ -95,9 +95,15 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     ward_values = household_comp.loc[household_comp['ward_id'] == ward_id]
 
     # Within ward, filter for age, number of floors, roof, foundation, ground floor type
-    smaller_df_wards = ward_values.where(ward_values['count_floors_pre_eq'] == floors).dropna()
     age_mask = ward_values['age_building'].isin(np.arange(age-3, age+3))
-    smaller_df_wards = smaller_df_wards[age_mask]
+    smaller_df_wards = ward_values[age_mask]
+
+    if floors in smaller_df_wards.count_floors_pre_eq.unique():
+        smaller_df_wards = smaller_df_wards.where(smaller_df_wards['count_floors_pre_eq'] == floors).dropna()
+    else:
+        floor_mask = smaller_df_wards['count_floors_pre_eq'].isin(np.arange(int(floors)-1, int(floors)+1))
+        smaller_df_wards = smaller_df_wards[floor_mask]
+
     if foundation in smaller_df_wards.foundation_type.unique():
         smaller_df_wards = smaller_df_wards.where(smaller_df_wards['foundation_type'] == foundation).dropna()
 
@@ -113,9 +119,14 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     data_grouped_wards.drop(user_input.keys(), axis=1, inplace=True)
     # data_grouped_wards.drop(['damage_grade'], axis=1, inplace=True)
 
+    # If mode returns two values, take first value
+    for col in data_grouped_wards.select_dtypes(include=['object']).columns:
+        if len(data_grouped_wards[col].values[0][0]) > 1:
+            data_grouped_wards[col].values[0] = data_grouped_wards[col].values[0][0]
+
     # Get average data for chosen ward_id
-    #remaining_data = data_grouped_wards.loc[ward_id]
-    #remaining_data_df = pd.DataFrame(remaining_data).T
+    # remaining_data = data_grouped_wards.loc[ward_id]
+    # remaining_data_df = pd.DataFrame(remaining_data).T
 
     # Create model input
     model_input = pd.concat([user_input_df, data_grouped_wards], axis=1)

@@ -106,14 +106,7 @@ def train_model(model):
 
     #Separate model fitting for neural network
 
-    if type(model) == keras.engine.sequential.Sequential():
-        y_train_over_hot = OneHotEncoder(handle_unknown='ignore').fit_transform(y_train_over.values.reshape(-1,1)).toarray()
-        # fit model
-        es = EarlyStopping(patience=10, restore_best_weights=True)
-        model.fit(X_train_over, y_train_over_hot, epochs=100, batch_size=32, validation_data=(X_val, y_val), verbose=0, callbacks=[es])
-    else:
-        # fit the model
-        model.fit(X_train_over, y_train_over)
+    model.fit(X_train_over, y_train_over)
 
     return model
 
