@@ -1,2 +1,2 @@
-git+https://github.com/chantalwuer/earthquake_damage/data#egg=earthquake_damage/data
+git+https://github.com/chantalwuer/earthquake_damage#egg=earthquake_damage
 seaborn
