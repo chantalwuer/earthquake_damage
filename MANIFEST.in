@@ -1,4 +1,4 @@
 include requirements.txt
-include processed_data/comp_data_household.csv
+include earthquake_damage/data/processed_data/comp_data_household.csv
 include earthquake_damage/data/preprocessor.pkl
 include Streamlit/fit_best_model.pkl

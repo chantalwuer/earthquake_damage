@@ -25,7 +25,7 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
     Output is a dataframe with the processed features ready for the model
     '''
     # ! Add file path here
-    full_path = os.path.join(os.path.dirname(__file__), './../../processed_data/comp_data_household.csv')
+    full_path = os.path.join(os.path.dirname(__file__), 'processed_data/comp_data_household.csv')
     household_comp = pd.read_csv(full_path)
     # household_comp = pd.read_csv(f'/Users/{my_name}/code/chantalwuer/earthquake_damage/processed_data/comp_data_household.csv')
 
@@ -146,7 +146,6 @@ def get_model_input(district_id=12, municipality_id=1201, ward=5, age=5, floors=
 
     model_input_proc = preprocessor.transform(model_input)
 
-    print(model_input_proc.shape)
     return pd.DataFrame(model_input_proc[:, :79])
 
 # if __name__ == '__main__':

@@ -14,7 +14,7 @@ setup(name='earthquake_damage',
       test_suite='tests',
       include_package_data=True,
       data_files=[
-          os.path.join('processed_data/comp_data_household.csv'),
+          os.path.join('earthquake_damage/data/processed_data/comp_data_household.csv'),
           os.path.join('earthquake_damage/data/preprocessor.pkl'),
           os.path.join('Streamlit/fit_best_model.pkl')
       ],
